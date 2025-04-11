@@ -1,59 +1,61 @@
 function solution(land) {
-    const n = land.length; // 세로 길이
-    const m = land[0].length; // 가로 길이
-    const visited = Array.from({ length: n }, () => Array(m).fill(false));
-    const oilClusterSizes = []; // 석유 덩어리 크기와 열 정보 저장
+    const newLand = land.map((e) => e.map((e2) => e2));
+    const oilMap = [];
+    const dir = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const n = land.length;
+    const m = land[0].length;
+    let idx = 1;
+    let answer = 0;
 
-    const directions = [
-        [-1, 0], // 위
-        [1, 0], // 아래
-        [0, -1], // 왼쪽
-        [0, 1] // 오른쪽
-    ];
+    for(let i = 0; i < n; i++) {
+        for(let j = 0; j < m; j++) {
+            if(newLand[i][j] === 1) bfs(i, j);
+        }
+    }
+
+    for(let i = 0; i < m; i++) {
+        const oilSet = new Set();
+        let oilSum = 0;
+
+        for(let j = 0; j < n; j++) {
+            if(land[j][i] > 0) oilSet.add(land[j][i]);
+        }
+
+        for(const oil of oilSet) {
+            oilSum += oilMap[oil - 1];
+        }
+
+        answer = Math.max(oilSum, answer);
+    }
+
+    return answer;
 
     function bfs(i, j) {
         const queue = [[i, j]];
-        visited[i][j] = true;
-        let size = 0;
-        const columns = new Set(); // 이 덩어리가 포함된 열
+        let sumOil = 0;
 
-        while (queue.length > 0) {
-            const [x, y] = queue.shift();
-            size++;
-            columns.add(y); // 현재 열 기록
+        newLand[i][j] = 0;
+        land[i][j] = idx;
+        sumOil++;
 
-            for (const [dx, dy] of directions) {
-                const nx = x + dx;
-                const ny = y + dy;
+        while(queue.length > 0) {
+            const [nowI, nowJ] = queue.shift();
+            
 
-                if (nx >= 0 && nx < n && ny >= 0 && ny < m && land[nx][ny] === 1 && !visited[nx][ny]) {
-                    visited[nx][ny] = true;
-                    queue.push([nx, ny]);
+            for(let d = 0; d < 4; d++) {
+                const nextI = nowI + dir[d][0];
+                const nextJ = nowJ + dir[d][1];
+
+                if(nextI >= 0 && nextJ >= 0 && nextI < n && nextJ < m && newLand[nextI][nextJ] === 1) {
+                    queue.push([nextI, nextJ]);
+                    newLand[nextI][nextJ] = 0;
+                    land[nextI][nextJ] = idx;
+                    sumOil++;
                 }
             }
         }
-        return { size, columns: Array.from(columns) }; // 덩어리 크기와 열 정보 반환
+
+        oilMap.push(sumOil);
+        idx++;
     }
-
-    // 모든 석유 덩어리 탐색
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < m; j++) {
-            if (land[i][j] === 1 && !visited[i][j]) {
-                const { size, columns } = bfs(i, j);
-                oilClusterSizes.push({ size, columns });
-            }
-        }
-    }
-
-    // 각 열에서 최대 석유량 계산
-    const maxOilByColumn = Array(m).fill(0);
-
-    for (const { size, columns } of oilClusterSizes) {
-        for (const col of columns) {
-            maxOilByColumn[col] += size; // 해당 열에 덩어리 크기 합산
-        }
-    }
-
-    // 최대 석유량 반환
-    return Math.max(...maxOilByColumn);
 }
