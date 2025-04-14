@@ -12,7 +12,7 @@ class MinHeap {
         let idx = this.heap.length - 1;
         
         while(idx > 0) {
-            const pIdx = Math.floor((idx - 1) / 2);
+            let pIdx = Math.floor((idx - 1) / 2);
             
             if(this.heap[pIdx] <= this.heap[idx]) break;
             
@@ -26,7 +26,7 @@ class MinHeap {
         
         const min = this.heap[0];
         this.heap[0] = this.heap.pop();
-        this.bubbleDown();
+        this.bubbleDown();    
         return min;
     }
     
@@ -45,16 +45,16 @@ class MinHeap {
             
             if(sIdx === idx) break;
             
-            [this.heap[idx], this.heap[sIdx]] = [this.heap[sIdx], this.heap[idx]];
+            [this.heap[sIdx], this.heap[idx]] = [this.heap[idx], this.heap[sIdx]];
             idx = sIdx;
         }
-        
     }
     
     size() {
         return this.heap.length;
     }
 }
+
 
 function solution(scoville, K) {
     const minHeap = new MinHeap();
@@ -67,13 +67,13 @@ function solution(scoville, K) {
     while(minHeap.size() > 0) {
         const min = minHeap.delete();
         
-        if(min >= K) break;
-        
+        if(min >= K) {
+            break;
+        }
         else if(minHeap.size() === 0) {
             answer = -1;
             break;
         }
-        
         else {
             minHeap.insert(min + 2 * minHeap.delete());
             answer++;
