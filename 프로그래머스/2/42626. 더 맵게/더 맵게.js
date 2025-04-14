@@ -22,7 +22,7 @@ class MinHeap {
     }
     
     delete() {
-        if (this.heap.length === 1) return this.heap.pop();
+        if(this.heap.length === 1) return this.heap.pop();
         
         const min = this.heap[0];
         this.heap[0] = this.heap.pop();
@@ -35,19 +35,20 @@ class MinHeap {
         let idx = 0;
         
         while(true) {
-            const lIdx = 2 * idx + 1;
-            const rIdx = 2 * idx + 2;
+            const lIdx = idx * 2 + 1;
+            const rIdx = idx * 2 + 2;
             let sIdx = idx;
             
             if(lIdx < len && this.heap[lIdx] < this.heap[sIdx]) sIdx = lIdx;
             
             if(rIdx < len && this.heap[rIdx] < this.heap[sIdx]) sIdx = rIdx;
             
-            if(idx === sIdx) break;
+            if(sIdx === idx) break;
             
-            [this.heap[sIdx], this.heap[idx]] = [this.heap[idx], this.heap[sIdx]];
+            [this.heap[idx], this.heap[sIdx]] = [this.heap[sIdx], this.heap[idx]];
             idx = sIdx;
         }
+        
     }
     
     size() {
@@ -66,13 +67,13 @@ function solution(scoville, K) {
     while(minHeap.size() > 0) {
         const min = minHeap.delete();
         
-        if(min >= K) {
-            break;
-        }
+        if(min >= K) break;
+        
         else if(minHeap.size() === 0) {
             answer = -1;
             break;
         }
+        
         else {
             minHeap.insert(min + 2 * minHeap.delete());
             answer++;
