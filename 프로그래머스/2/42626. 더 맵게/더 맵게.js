@@ -14,9 +14,9 @@ class MinHeap {
         while(idx > 0) {
             let pIdx = Math.floor((idx - 1) / 2);
             
-            if(this.heap[pIdx] <= this.heap[idx]) break;
+            if(this.heap[idx] > this.heap[pIdx]) break;
             
-            [this.heap[pIdx], this.heap[idx]] = [this.heap[idx], this.heap[pIdx]];
+            [this.heap[idx], this.heap[pIdx]] = [this.heap[pIdx], this.heap[idx]];
             idx = pIdx;
         }
     }
@@ -26,7 +26,8 @@ class MinHeap {
         
         const min = this.heap[0];
         this.heap[0] = this.heap.pop();
-        this.bubbleDown();    
+        this.bubbleDown();
+        
         return min;
     }
     
@@ -35,8 +36,8 @@ class MinHeap {
         let idx = 0;
         
         while(true) {
-            const lIdx = idx * 2 + 1;
-            const rIdx = idx * 2 + 2;
+            let lIdx = idx * 2 + 1;
+            let rIdx = idx * 2 + 2;
             let sIdx = idx;
             
             if(lIdx < len && this.heap[lIdx] < this.heap[sIdx]) sIdx = lIdx;
