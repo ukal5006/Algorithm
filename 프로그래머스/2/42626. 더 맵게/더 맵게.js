@@ -3,7 +3,7 @@ class MinHeap {
         this.heap = [];
     }
     
-    insert(num) {
+    add(num) {
         this.heap.push(num);
         this.bubbleUp();
     }
@@ -12,7 +12,7 @@ class MinHeap {
         let idx = this.heap.length - 1;
         
         while(idx > 0) {
-            let pIdx = Math.floor((idx - 1) / 2);
+            const pIdx = Math.floor((idx - 1) / 2);
             
             if(this.heap[pIdx] <= this.heap[idx]) break;
             
@@ -21,7 +21,7 @@ class MinHeap {
         }
     }
     
-    delete() {
+    get() {
         if(this.heap.length === 1) return this.heap.pop();
         
         const min = this.heap[0];
@@ -54,19 +54,43 @@ class MinHeap {
     size() {
         return this.heap.length;
     }
-}
 
+        
+    bubbleDown() {
+        const len = this.heap.length;
+        let idx = 0;
+            
+        while(true) {
+            const lIdx = idx * 2 + 1;
+            const rIdx = idx * 2 + 2;
+            let pIdx = idx;
+
+            if(lIdx < len && this.heap[lIdx] < this.heap[pIdx]) pIdx = lIdx;
+                
+            if(rIdx < len && this.heap[rIdx] < this.heap[pIdx]) pIdx = rIdx;    
+                
+            if (idx === pIdx) break;
+                
+            [this.heap[pIdx], this.heap[idx]] = [this.heap[idx], this.heap[pIdx]];
+            idx = pIdx;
+        }
+    }
+        
+    size() {
+        return this.heap.length;
+    }
+}
 
 function solution(scoville, K) {
     const minHeap = new MinHeap();
     let answer = 0;
     
     for(let i = 0; i < scoville.length; i++) {
-        minHeap.insert(scoville[i]);
+        minHeap.add(scoville[i]);
     }
     
     while(minHeap.size() > 0) {
-        const min = minHeap.delete();
+        const min = minHeap.get();
         
         if(min >= K) {
             break;
@@ -76,7 +100,7 @@ function solution(scoville, K) {
             break;
         }
         else {
-            minHeap.insert(min + 2 * minHeap.delete());
+            minHeap.add(min + 2 * minHeap.get());
             answer++;
         }
     }
