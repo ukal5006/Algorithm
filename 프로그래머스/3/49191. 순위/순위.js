@@ -8,54 +8,30 @@ function solution(n, results) {
         resultGraph[loser][winner] = -1;
     }
     
-    for(let i = 1; i <= n; i++) {
-        for(let j = 1; j <= n; j++) {
-            if(i !== j && resultGraph[i][j] !== 0) {
-                bfs(i, j, resultGraph[i][j]);
-            }
-        }
-    }
-    
-    
-    for(let i = 1; i <= n; i++) {
-        if(check(i)) answer++;
-    }
-    
-    return answer;
-    
-    
-    function bfs(me, target, value) {
-        const queue = [target];
-        const visited = Array(n + 1).fill(false);
-        visited[target] = true;
-        
-        while(queue.length > 0) {
-            const nowTarget = queue.shift();
-            
-            for(let i = 1; i <= n; i++) {
-                if(!visited[i] && resultGraph[nowTarget][i] === value) {
-                    resultGraph[me][i] = value;
-                    resultGraph[i][me] = value * -1;
-                    visited[i] = true;
-                    
-                    queue.push(i);
+    for(let k = 1; k <= n; k++) {
+        for(let i = 1; i <= n; i++) {
+            for(let j = 1; j <= n; j++) {
+                if(resultGraph[i][k] === 1 && resultGraph[k][j] === 1) {
+                    resultGraph[i][j] = 1;
+                    resultGraph[j][i] = -1;
+                }
+                if(resultGraph[i][k] === -1 && resultGraph[k][j] === -1) {
+                    resultGraph[i][j] = -1;
+                    resultGraph[j][i] = 1;
                 }
             }
         }
     }
     
-    function check(i) {
-        let winCount = 0;
+    for(let i = 1; i <= n; i++) {
+        let known = 0;
         
         for(let j = 1; j <= n; j++) {
-            if(i !== j) {
-                if(resultGraph[i][j] === 1) winCount++;
-                else if(resultGraph[i][j] === 0) return false;
-            }
+            if(resultGraph[j][i] !== 0) known++;
         }
         
-        return true;
+        if(known === n - 1) answer++;
     }
     
-    
+    return answer;
 }
